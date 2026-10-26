@@ -80,8 +80,8 @@ src = ["src", "tests"]
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "B", "UP", "SIM", "C4", "RUF"]
-# RUF001/RUF002 flag typographic quotes and the "â€º" separator, both of which are
-# intentional: curly quotes are normalised to ASCII at runtime, and "â€º" labels
+# RUF001/RUF002 flag typographic quotes and the "›" separator, both of which are
+# intentional: curly quotes are normalised to ASCII at runtime, and "›" labels
 # document sections in citations.
 ignore = ["E501", "RUF001", "RUF002"]
 

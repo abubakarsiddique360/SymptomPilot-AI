@@ -31,7 +31,7 @@ the care they have or have not received.
 
 ## Scope
 
-This code applies in all project spaces â€” issues, pull requests, discussions,
+This code applies in all project spaces — issues, pull requests, discussions,
 commit messages and any other channel where you represent the project.
 
 ## Reporting and enforcement

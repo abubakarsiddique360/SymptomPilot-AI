@@ -1,0 +1,10 @@
+# Normalise line endings so a Windows checkout, a Linux checkout and CI agree.
+* text=auto eol=lf
+
+# Binary assets keep their bytes untouched.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.pdf binary
+*.ico binary
