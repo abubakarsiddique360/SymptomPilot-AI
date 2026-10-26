@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="SymptomPilot — local-first symptom triage assistant with cited evidence. Educational use only." />
+  <title>SymptomPilot — evidence-grounded triage</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><text y='50' font-size='48'>🧭</text></svg>" />
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+  <a class="skip-link" href="#conversation">Skip to conversation</a>
+
+  <header class="site-header">
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true">◎</span>
+      <div>
+        <h1>SymptomPilot</h1>
+        <p class="tagline">Evidence-grounded triage guidance</p>
+      </div>
+    </div>
+    <div class="header-actions">
+      <span class="status" id="status" role="status">checking…</span>
+      <button class="icon-button" id="theme-toggle" type="button" aria-label="Toggle colour theme">
+        <span aria-hidden="true">◐</span>
+      </button>
+    </div>
+  </header>
+
+  <main class="layout">
+    <aside class="sidebar" aria-label="About this assistant">
+      <section class="panel">
+        <h2>How a reply is built</h2>
+        <ol class="steps">
+          <li><strong>Screen</strong> — deterministic red-flag rules set urgency first.</li>
+          <li><strong>Retrieve</strong> — hybrid BM25 (+ optional dense) search over 12 local pages.</li>
+          <li><strong>Compose</strong> — grounded answer with <code>[S1]</code> evidence markers.</li>
+          <li><strong>Verify</strong> — markers without evidence are stripped before display.</li>
+        </ol>
+      </section>
+
+      <section class="panel">
+        <h2>Topics</h2>
+        <ul class="topic-list" id="topic-list">
+          <li class="muted">loading…</li>
+        </ul>
+      </section>
+
+      <section class="panel warning">
+        <h2>Safety first</h2>
+        <p>
+          This assistant is educational. It cannot diagnose or rule out illness and never
+          replaces a clinician. For chest pain, breathing difficulty, stroke signs or thoughts
+          of self-harm, contact emergency services now.
+        </p>
+      </section>
+    </aside>
+
+    <section class="chat" aria-label="Conversation">
+      <div class="banner" id="banner" hidden>
+        <span class="banner-level" id="banner-level"></span>
+        <p id="banner-text"></p>
+      </div>
+
+      <div class="transcript" id="conversation" aria-live="polite" aria-relevant="additions text">
+        <article class="message assistant welcome">
+          <div class="message-body">
+            <p>Describe what you are feeling, how long it has been going on, and anything that
+            makes it better or worse. I will tell you how urgent it looks and show the evidence I
+            used — but I am not a doctor.</p>
+            <div class="suggestions" id="suggestions">
+              <button type="button" class="chip" data-prompt="I have had a mild headache and sore throat for two days">Mild headache &amp; sore throat</button>
+              <button type="button" class="chip" data-prompt="Burning when I urinate and needing to go constantly since yesterday">Urinary symptoms</button>
+              <button type="button" class="chip" data-prompt="My father suddenly has a drooping face and slurred speech">Sudden face drooping</button>
+              <button type="button" class="chip" data-prompt="Cannot keep fluids down and feeling dizzy when standing">Vomiting &amp; dizziness</button>
+            </div>
+          </div>
+        </article>
+      </div>
+
+      <form class="composer" id="composer">
+        <label class="visually-hidden" for="message">Your message</label>
+        <textarea id="message" name="message" rows="2" maxlength="4000" required
+          placeholder="e.g. Sharp lower back pain for three days, worse when sitting…"></textarea>
+        <button type="submit" id="send" class="send-button">
+          <span aria-hidden="true">➜</span>
+          <span class="visually-hidden">Send message</span>
+        </button>
+      </form>
+      <p class="footnote" id="disclaimer">
+        Educational triage aid — not medical advice, diagnosis or treatment.
+      </p>
+    </section>
+  </main>
+
+  <script src="/static/app.js" defer></script>
+</body>
+</html>

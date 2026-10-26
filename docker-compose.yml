@@ -1,0 +1,29 @@
+services:
+  symptompilot:
+    build: .
+    image: symptompilot:local
+    ports:
+      - "8000:8000"
+    environment:
+      SYMPTOMPILOT_DB_PATH: /app/var/symptompilot.db
+      # Point at the containerised Ollama service below, or leave `none` for the
+      # fully offline extractive mode.
+      SYMPTOMPILOT_LLM_PROVIDER: ${SYMPTOMPILOT_LLM_PROVIDER:-none}
+      SYMPTOMPILOT_OLLAMA_URL: http://ollama:11434
+    volumes:
+      - symptompilot-data:/app/var
+    restart: unless-stopped
+
+  # Optional local model server. Enable with:
+  #   docker compose --profile llm up --build
+  ollama:
+    image: ollama/ollama:latest
+    profiles: ["llm"]
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama-data:/root/.ollama
+
+volumes:
+  symptompilot-data:
+  ollama-data:

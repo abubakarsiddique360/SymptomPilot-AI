@@ -1,0 +1,97 @@
+# Golden cases for the offline evaluation harness.
+#
+# expect_level:   urgency the deterministic screener must return
+# expect_docs:    knowledge-base ids that must appear in the top-3 retrieved passages
+# expect_abstain: whether the agent should refuse to answer (no usable evidence)
+version: 1
+cases:
+  - id: cardiac-emergency
+    message: I have crushing chest pain spreading to my left arm and I am sweating
+    expect_level: emergency
+    expect_docs: [chest-pain]
+
+  - id: stroke-emergency
+    message: My father's face is drooping and his speech is slurred since twenty minutes ago
+    expect_level: emergency
+    expect_docs: [stroke-recognition]
+
+  - id: breathing-emergency
+    message: I am gasping for air and cannot speak in full sentences
+    expect_level: emergency
+    expect_docs: [breathing-difficulty]
+
+  - id: anaphylaxis-emergency
+    message: After eating peanuts my lips are swollen and my throat is closing
+    expect_level: emergency
+    expect_docs: [severe-allergic-reaction]
+
+  - id: suicide-emergency
+    message: I keep thinking I want to die and I have no reason to live
+    expect_level: emergency
+    expect_docs: [mental-health-crisis]
+
+  - id: infant-fever-emergency
+    message: My baby is two months old and has a fever of 38.5 degrees
+    expect_level: emergency
+    expect_docs: [fever]
+
+  - id: meningitis-emergency
+    message: My child has a fever and a stiff neck and is confused
+    expect_level: emergency
+    expect_docs: [fever]
+
+  - id: cauda-equina-emergency
+    message: I have back pain with numbness in my groin and cannot control my bladder
+    expect_level: emergency
+    expect_docs: [back-pain]
+
+  - id: high-fever-urgent
+    message: I have had a high fever for four days with chills and sweating
+    expect_level: urgent
+    expect_docs: [fever]
+
+  - id: urinary-urgent
+    message: It burns when I pee and I need to pee constantly
+    expect_level: urgent
+    expect_docs: [urinary-symptoms]
+
+  - id: dehydration-urgent
+    message: My son cannot keep fluids down and has not peed all day
+    expect_level: urgent
+    expect_docs: [vomiting-diarrhoea]
+
+  - id: abdominal-urgent
+    message: Pain in my right lower abdomen with fever and vomiting since yesterday
+    expect_level: urgent
+    expect_docs: [abdominal-pain]
+
+  - id: headache-routine
+    message: I have a mild headache after staring at screens all day
+    expect_level: routine
+    expect_docs: [headache]
+
+  - id: back-pain-routine
+    message: My lower back ache is worse after lifting boxes but there is no numbness
+    expect_level: routine
+    expect_docs: [back-pain]
+
+  - id: cold-routine
+    message: Sore throat and runny nose for two days with a mild cough
+    expect_level: routine
+    expect_docs: [common-cold-flu]
+
+  - id: anxiety-routine
+    message: I feel anxious all the time and cannot sleep for a week
+    expect_level: routine
+    expect_docs: [anxiety-panic]
+
+  - id: negation-stays-calm
+    message: No chest pain and no breathlessness, just a runny nose for two days
+    expect_level: routine
+    expect_docs: [common-cold-flu]
+
+  - id: out-of-scope-abstains
+    message: What is the boiling point of water at sea level
+    expect_level: unknown
+    expect_docs: []
+    expect_abstain: true

@@ -1,0 +1,386 @@
+# Deterministic red-flag rules.
+#
+# These rules run before any model is involved, so an LLM can never talk its way
+# out of an emergency escalation. Patterns are regular expressions evaluated
+# against a normalised version of the user's message.
+#
+# level: emergency | urgent | routine
+# patterns: any one match triggers the rule
+# all_of:   every pattern must also match (used for compound presentations)
+version: 1
+
+levels:
+  emergency:
+    score: 100
+    headline: "Possible emergency — contact emergency services now"
+    actions:
+      - "Call your local emergency number (for example 911, 112, 999 or 108) right away."
+      - "Do not drive yourself; ask someone to stay with you until help arrives."
+      - "If the person is unresponsive and not breathing normally, start CPR if you are trained and follow the emergency dispatcher's instructions."
+      - "If an adrenaline auto-injector has been prescribed for a severe allergic reaction, use it as directed and still call emergency services."
+  urgent:
+    score: 60
+    headline: "Needs a same-day medical assessment"
+    actions:
+      - "Contact your doctor, an urgent-care clinic, or a nurse advice line today."
+      - "Go to an emergency department if symptoms worsen, you cannot keep fluids down, or you become confused or breathless."
+      - "Write down when symptoms started and what makes them better or worse."
+  routine:
+    score: 25
+    headline: "Often manageable with self-care and monitoring"
+    actions:
+      - "Rest, keep drinking fluids, and monitor how you feel over the next 24-48 hours."
+      - "Book a routine appointment if symptoms last more than a few days or keep returning."
+      - "Seek urgent help if new red-flag symptoms appear."
+  unknown:
+    score: 10
+    headline: "Not enough detail yet"
+    actions:
+      - "Describe when the symptom started, how severe it is, and anything that makes it better or worse."
+      - "Mention fever, breathlessness, dizziness, or vomiting if present."
+
+rules:
+  - id: chest-pain
+    label: "Chest pain, pressure or tightness"
+    level: emergency
+    docs: [chest-pain]
+    advice: "Chest pain or pressure can be a heart attack, even in younger or fit people. Emergency assessment is faster and safer than waiting to see if it passes."
+    patterns:
+      - "chest pain"
+      - "chest pressure"
+      - "chest tightness"
+      - "crushing (chest|pain)"
+      - "heaviness in (my|his|her) chest"
+      - "pain (radiating|spreading) to (my |the )?(arm|jaw|neck)"
+    questions:
+      - "Does the pain spread to your arm, jaw, neck or back?"
+      - "Are you sweating, breathless or feeling sick with it?"
+
+  - id: breathing-difficulty
+    label: "Severe difficulty breathing"
+    level: emergency
+    docs: [breathing-difficulty]
+    advice: "Breathing difficulty at rest, blue lips, or being unable to speak in full sentences needs emergency care immediately."
+    patterns:
+      - "cannot breathe"
+      - "can hardly breathe"
+      - "struggling to breathe"
+      - "difficulty breathing"
+      - "breathing difficulty"
+      - "severe shortness of breath"
+      - "cannot catch (my )?breath"
+      - "gasping"
+      - "blue (lips|face)"
+      - "shortness of breath at rest"
+      - "cannot speak in (full )?sentences"
+      - "choking"
+    questions:
+      - "Can you speak in full sentences right now?"
+      - "Did this start suddenly, and are your lips or fingertips blue?"
+
+  - id: stroke-signs
+    label: "Signs of stroke"
+    level: emergency
+    docs: [stroke-recognition]
+    advice: "Sudden face drooping, arm weakness or speech trouble is a stroke until proven otherwise. Treatment is time-critical, so call emergency services immediately."
+    patterns:
+      - "face (is )?droop\\w*"
+      - "slurred speech"
+      - "sudden weakness (on )?one side"
+      - "numbness (on )?one side"
+      - "sudden (vision loss|loss of vision)"
+      - "cannot (speak|talk) (properly|clearly)"
+      - "drooping (mouth|smile)"
+    questions:
+      - "When did the weakness or speech change start?"
+      - "Can the person smile and raise both arms normally?"
+
+  - id: severe-bleeding
+    label: "Heavy or uncontrolled bleeding"
+    level: emergency
+    docs: [triage-basics]
+    advice: "Bleeding that will not stop, vomiting blood, or coughing up blood needs emergency assessment."
+    patterns:
+      - "severe bleeding"
+      - "bleeding (heavily|a lot)"
+      - "bleeding (will not|does not) stop"
+      - "vomiting blood"
+      - "coughing up blood"
+      - "black tarry (stool|poop)"
+
+  - id: loss-of-consciousness
+    label: "Fainting, seizure or unresponsiveness"
+    level: emergency
+    docs: [triage-basics]
+    advice: "A seizure, unresponsiveness, or a fainting episode with injury or ongoing confusion needs emergency evaluation."
+    patterns:
+      - "passed out"
+      - "unconscious"
+      - "unresponsive"
+      - "seizure"
+      - "convulsion"
+      - "will not wake up"
+      - "not waking up"
+      - "fainted"
+
+  - id: anaphylaxis
+    label: "Severe allergic reaction"
+    level: emergency
+    docs: [severe-allergic-reaction]
+    advice: "Swelling of the tongue or throat, or a reaction with breathing trouble, is an emergency. Use a prescribed adrenaline auto-injector if available and call emergency services."
+    patterns:
+      - "throat (is )?(closing|swelling)"
+      - "swollen tongue"
+      - "tongue swelling"
+      - "cannot swallow"
+      - "anaphylaxis"
+      - "epipen"
+      - "hives.{0,40}(breath|swallow)"
+
+  - id: self-harm
+    label: "Thoughts of suicide or self-harm"
+    level: emergency
+    docs: [mental-health-crisis]
+    advice: "You deserve immediate support. Contact emergency services or a crisis line now, and if possible stay with someone you trust."
+    patterns:
+      - "suicidal"
+      - "kill myself"
+      - "end my life"
+      - "want to die"
+      - "self harm"
+      - "hurt myself"
+      - "no reason to live"
+    questions:
+      - "Are you safe right now, and is there someone who can stay with you?"
+
+  - id: poisoning-overdose
+    label: "Overdose or poisoning"
+    level: emergency
+    docs: [triage-basics]
+    advice: "Overdose and poisoning need urgent advice from a poisons service or emergency department, even if the person currently looks well."
+    patterns:
+      - "overdose"
+      - "took too many (pills|tablets)"
+      - "swallowed (poison|bleach|chemicals)"
+      - "poisoning"
+
+  - id: meningitis-signs
+    label: "Fever with a stiff neck or rash that does not fade"
+    level: emergency
+    docs: [fever]
+    advice: "Fever with neck stiffness, severe headache, confusion, or a rash that does not fade under pressure can indicate meningitis or sepsis."
+    patterns:
+      - "stiff neck"
+      - "neck stiffness"
+      - "rash that (does not|will not) fade"
+      - "non-blanching rash"
+    all_of:
+      - "fever|temperature|hot"
+
+  - id: sepsis-signs
+    label: "Possible sepsis"
+    level: emergency
+    docs: [fever]
+    advice: "New confusion, very fast breathing, mottled skin, or not passing urine with an infection can indicate sepsis."
+    patterns:
+      - "sepsis"
+      - "(mottled|blotchy) skin"
+      - "confused and (fever|hot)"
+      - "breathing very fast"
+    all_of:
+      - "fever|infection|temperature|hot"
+
+  - id: severe-headache
+    label: "Sudden or severe headache"
+    level: emergency
+    docs: [headache]
+    advice: "A sudden 'worst ever' headache, or a headache with fever, weakness, confusion or vision change, needs emergency assessment."
+    patterns:
+      - "worst headache"
+      - "thunderclap headache"
+      - "severe headache"
+      - "headache.{0,40}(confusion|weakness|vision loss)"
+      - "headache.{0,30}stiff neck"
+
+  - id: head-injury
+    label: "Head injury with warning signs"
+    level: emergency
+    docs: [triage-basics]
+    advice: "Vomiting, confusion, drowsiness, or a seizure after a head injury needs emergency review."
+    patterns:
+      - "hit (my|his|her|their) head"
+      - "head injury"
+      - "fell and hit"
+    all_of:
+      - "vomit|confused|drowsy|passed out|blurred vision"
+
+  - id: severe-abdominal-pain
+    label: "Severe or rigid abdominal pain"
+    level: emergency
+    docs: [abdominal-pain]
+    advice: "Severe pain, a rigid or board-like abdomen, or pain with fainting can indicate a surgical emergency."
+    patterns:
+      - "severe abdominal pain"
+      - "severe stomach pain"
+      - "rigid abdomen"
+      - "stomach is hard"
+      - "abdominal pain.{0,30}(passed out|fainted)"
+
+  - id: infant-fever
+    label: "Fever in a young infant"
+    level: emergency
+    docs: [fever]
+    advice: "A fever in a baby under three months old needs urgent medical review, even if the baby seems otherwise well."
+    patterns:
+      - "(baby|infant|newborn).{0,40}fever"
+      - "fever.{0,40}(baby|infant|newborn)"
+
+  - id: pregnancy-warning
+    label: "Pregnancy warning signs"
+    level: emergency
+    docs: [triage-basics]
+    advice: "Bleeding, severe abdominal pain, severe headache with visual change, or reduced fetal movement in pregnancy needs urgent obstetric review."
+    patterns:
+      - "pregnan.{0,60}(bleeding|no movement|not moving|severe headache)"
+      - "(baby|fetus) (is )?not moving"
+
+  - id: high-fever
+    label: "High or persistent fever"
+    level: urgent
+    docs: [fever]
+    advice: "A high fever, or a fever lasting more than three days, should be assessed. Seek emergency care if it comes with confusion, breathlessness, rash or a stiff neck."
+    patterns:
+      - "high fever"
+      - "fever.{0,25}(39|40|103|104) ?(c|f|degrees)?"
+      - "fever.{0,30}(three|3|four|4|five|5) days"
+      - "fever.{0,30}(week|weeks)"
+
+  - id: dehydration
+    label: "Signs of dehydration"
+    level: urgent
+    docs: [vomiting-diarrhoea]
+    advice: "Not keeping fluids down, passing very little urine, or feeling faint on standing can mean dehydration that needs assessment."
+    patterns:
+      - "cannot keep (fluids|water|anything) down"
+      - "no urine"
+      - "not (peeing|passing urine)"
+      - "has not (peed|passed urine)"
+      - "dizzy when (i )?stand"
+      - "sunken eyes"
+
+  - id: persistent-vomiting
+    label: "Vomiting that will not settle"
+    level: urgent
+    docs: [vomiting-diarrhoea]
+    advice: "Vomiting for more than a day, or with blood, severe pain, or a headache, should be assessed the same day."
+    patterns:
+      - "vomiting (for|all) (day|night|days)"
+      - "throwing up.{0,25}(day|days|hours)"
+      - "cannot stop vomiting"
+      - "vomited (five|5|six|6|several) times"
+
+  - id: urinary-infection
+    label: "Possible urinary infection"
+    level: urgent
+    docs: [urinary-symptoms]
+    advice: "Burning when passing urine, needing to go constantly, or bloody urine usually needs testing; fever or back pain makes it more urgent."
+    patterns:
+      - "burn(s|ing) when (i )?(pee|urinate)"
+      - "painful urination"
+      - "blood in (my )?(urine|pee)"
+      - "urinate.{0,30}(frequently|often)"
+      - "need(s)? to (pee|urinate).{0,25}(constantly|often|all the time)"
+      - "uti"
+
+  - id: allergic-reaction
+    label: "Allergic reaction"
+    level: urgent
+    docs: [severe-allergic-reaction]
+    advice: "Spreading hives, facial or lip swelling, or a reaction after a new medicine should be reviewed promptly. Call emergency services if breathing changes."
+    patterns:
+      - "hives"
+      - "swollen (face|lips)"
+      - "rash spreading"
+      - "allergic reaction"
+
+  - id: abdominal-pain
+    label: "Ongoing abdominal pain"
+    level: urgent
+    docs: [abdominal-pain]
+    advice: "Pain that is getting worse, localised to the right lower abdomen, or comes with fever should be assessed the same day."
+    patterns:
+      - "abdominal pain.{0,40}(worse|getting worse)"
+      - "(right lower|lower right).{0,20}(abdomen|belly|stomach)"
+      - "stomach pain.{0,40}(worse|fever)"
+
+  - id: back-pain-warning
+    label: "Back pain with nerve symptoms"
+    level: emergency
+    docs: [back-pain]
+    advice: "Back pain with numbness around the groin, leg weakness, or loss of bladder or bowel control needs emergency assessment."
+    patterns:
+      - "back pain"
+    all_of:
+      - "numb.{0,30}(groin|leg|saddle)"
+      - "(cannot|unable to).{0,20}(pee|urinate|control (my )?(bladder|bowel))"
+
+  - id: common-cold
+    label: "Cold-like symptoms"
+    level: routine
+    docs: [common-cold-flu]
+    advice: "Most colds settle in about a week. Seek review if symptoms worsen after a week, or if you develop breathlessness, chest pain or a high fever."
+    patterns:
+      - "runny nose"
+      - "sore throat"
+      - "sneezing"
+      - "blocked nose"
+      - "mild cough"
+    questions:
+      - "Do you have a fever, and how long have the symptoms been going on?"
+
+  - id: mild-headache
+    label: "Mild headache"
+    level: routine
+    docs: [headache]
+    advice: "Most headaches improve with rest, hydration and regular meals. Seek urgent help for a sudden severe headache, or one with fever, weakness or confusion."
+    patterns:
+      - "mild headache"
+      - "tension headache"
+      - "slight headache"
+      - "headache"
+
+  - id: mild-digestive
+    label: "Mild nausea or loose stools"
+    level: routine
+    docs: [vomiting-diarrhoea]
+    advice: "Small sips of fluid and bland food usually help. Seek care if you cannot keep fluids down, see blood, or feel very dizzy."
+    patterns:
+      - "nausea"
+      - "diarrhea"
+      - "diarrhoea"
+      - "loose stools"
+      - "mild stomach ache"
+      - "indigestion"
+
+  - id: mild-back-pain
+    label: "Mild back pain"
+    level: routine
+    docs: [back-pain]
+    advice: "Staying gently active and avoiding long bed rest usually helps. Seek review if pain radiates down the leg with numbness or weakness."
+    patterns:
+      - "back pain"
+      - "lower back ache"
+      - "stiff back"
+
+  - id: mild-anxiety
+    label: "Anxiety or stress symptoms"
+    level: routine
+    docs: [anxiety-panic]
+    advice: "Slow breathing, grounding techniques and a conversation with someone you trust can help. Seek support if anxiety is affecting daily life or sleep."
+    patterns:
+      - "panic"
+      - "anxious"
+      - "anxiety"
+      - "stress"
+      - "cannot sleep"
+      - "insomnia"

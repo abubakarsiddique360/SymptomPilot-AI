@@ -1,0 +1,63 @@
+name: Bug report
+description: Something behaved incorrectly — a wrong urgency, a broken endpoint, a crash.
+title: "bug: "
+labels: ["bug", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for the report. **Do not paste real patient data, API keys or personal
+        health information.** Use invented examples only.
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: Describe the behaviour you saw and what you expected instead.
+    validations:
+      required: true
+  - type: textarea
+    id: message
+    attributes:
+      label: Input that reproduces it
+      description: The message you sent (anonymised) and, if relevant, the answer you received.
+      render: text
+    validations:
+      required: false
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Red-flag screening (urgency)
+        - Retrieval / citations
+        - Answer composition
+        - Web UI
+        - API
+        - CLI
+        - Packaging / Docker
+        - Documentation
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Version or commit
+      placeholder: "0.1.0"
+    validations:
+      required: false
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      placeholder: "Windows 11, Python 3.12, extractive mode"
+    validations:
+      required: false
+  - type: checkboxes
+    id: safety
+    attributes:
+      label: Safety check
+      options:
+        - label: This report contains no real personal or health data.
+          required: true
+        - label: This is not a request for medical advice.
+          required: true
